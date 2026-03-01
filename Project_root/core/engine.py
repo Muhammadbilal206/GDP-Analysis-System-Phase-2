@@ -20,10 +20,18 @@ class TransformationEngine:
                 return 0.0
 
         def get_name(row):
+            name = "Unknown"
             for key in ["Country Name", "Country", "Entity", "Territory", "country", "name", "Name"]:
                 if key in row and row[key]:
-                    return row[key]
-            return "Unknown"
+                    name = row[key]
+                    break
+            
+            if name != "Unknown":
+                invalid_terms = ["income", "IBRD", "IDA", "dividend", "World", "South Asia", "East Asia", "Middle East", "Sub-Saharan", "Latin America", "Euro area", "OECD", "Central Europe", "demographic", "Fragile", "small states", "Africa,"]
+                for term in invalid_terms:
+                    if term in name:
+                        return "Unknown"
+            return name
 
         continent_data = list(filter(lambda r: r.get('Continent') == target_continent, raw_data))
         
