@@ -21,7 +21,7 @@ class TransformationEngine:
 
         continent_data = list(filter(lambda r: r.get('Continent') == target_continent, raw_data))
         
-        mapped_gdp = list(map(lambda r: {"Country": r.get("Country", ""), "GDP": get_gdp(r, target_year)}, continent_data))
+        mapped_gdp = list(map(lambda r: {"Country": r.get("Country Name", ""), "GDP": get_gdp(r, target_year)}, continent_data))
         valid_gdp = list(filter(lambda x: x["GDP"] > 0, mapped_gdp))
         
         top_10 = sorted(valid_gdp, key=lambda x: x["GDP"], reverse=True)[:10]
@@ -31,8 +31,8 @@ class TransformationEngine:
             start = get_gdp(row, start_year)
             end = get_gdp(row, end_year)
             if start == 0:
-                return {"Country": row.get("Country"), "Growth": 0.0}
-            return {"Country": row.get("Country"), "Growth": ((end - start) / start) * 100}
+                return {"Country": row.get("Country Name"), "Growth": 0.0}
+            return {"Country": row.get("Country Name"), "Growth": ((end - start) / start) * 100}
 
         growth_rates = list(map(calc_growth, continent_data))
 
@@ -71,7 +71,7 @@ class TransformationEngine:
             declines = list(map(lambda i: gdps[i] < gdps[i+1], range(len(gdps)-1)))
             return all(declines) and len(declines) > 0
 
-        declining_countries = list(map(lambda r: {"Country": r.get("Country")}, filter(check_decline, raw_data)))
+        declining_countries = list(map(lambda r: {"Country": r.get("Country Name")}, filter(check_decline, raw_data)))
 
         global_total_target = global_total_for_year(target_year)
         
